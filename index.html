@@ -11,21 +11,21 @@
             box-sizing: border-box;
             font-family: 'Roboto', Arial, sans-serif;
         }
-        
+
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; /* Flexbox für Zentrierung */
+            flex-direction: column; /* Elemente untereinander */
+            align-items: center; /* Horizontale Zentrierung */
+            justify-content: center; /* Vertikale Zentrierung */
             background-color: #f5f5f5;
             overflow-x: hidden;
-            position: relative;
+            position: relative; /* Benötigt für z-index des Containers */
         }
-        
+
         .background {
             position: fixed;
             top: 0;
@@ -35,7 +35,7 @@
             z-index: -1;
             overflow: hidden;
         }
-        
+
         .background-image {
             position: absolute;
             top: 0;
@@ -48,30 +48,36 @@
             opacity: 1;
             z-index: -1;
         }
-        
+
         .app-container {
             width: 85%;
             max-width: 320px;
-            margin: 0 auto;
-            /* Positioniert den Container vertikal mittig, aber etwas nach unten verschoben */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -40%);
+            /* Entferne absolute Positionierung, um Flexbox-Zentrierung der Body zu nutzen */
+            /* position: absolute; */
+            /* top: 50%; */
+            /* left: 50%; */
+            /* transform: translate(-50%, -40%); */
+
+            /* Füge einen oberen Margin hinzu, um den Container leicht nach unten zu schieben */
+            /* Der Wert 4vh ist ein Startpunkt und kann angepasst werden, */
+            /* um die gewünschte Position relativ zum Hintergrundbild zu erreichen. */
+            margin-top: 4vh;
+
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             background-color: rgba(255, 255, 255, 0.95);
-            z-index: 10;
+            z-index: 10; /* Stellt sicher, dass der Container über dem Hintergrund liegt */
+            position: relative; /* Stellt sicher, dass der Lade-Spinner korrekt positioniert ist */
         }
-        
+
         .container {
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
-        
+
         h1 {
             color: #e64a19;
             text-align: center;
@@ -79,28 +85,28 @@
             margin-bottom: 12px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
-        
+
         .currency-flags {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin-bottom: 5px;
         }
-        
+
         .flag {
             width: 50px;
             height: 30px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        
+
         .exchange-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-bottom: 5px;
         }
-        
+
         .exchange-rate {
             font-size: 1.2rem;
             font-weight: bold;
@@ -113,12 +119,12 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .rate-value {
             display: flex;
             align-items: center;
         }
-        
+
         .trend-indicator {
             font-size: 0.9rem;
             padding: 3px 6px;
@@ -126,28 +132,28 @@
             color: white;
             margin-left: 8px;
         }
-        
+
         .trend-up {
             background-color: #27ae60;
         }
-        
+
         .trend-down {
             background-color: #e74c3c;
         }
-        
+
         .converter {
             background-color: rgba(255, 255, 255, 0.7);
             border-radius: 8px;
             padding: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .input-group {
             display: flex;
             margin-bottom: 12px;
             gap: 8px;
         }
-        
+
         .input-group input {
             flex: 1;
             padding: 12px;
@@ -156,7 +162,7 @@
             font-size: 1rem;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        
+
         .input-group select {
             width: 80px;
             padding: 10px;
@@ -165,10 +171,24 @@
             background-color: white;
             font-size: 1rem;
             text-align: center;
-            color: #0088ff;
+            color: #0088ff; /* Farbe aus dem Bild übernommen */
             font-weight: bold;
+            appearance: none; /* Standard-Pfeil entfernen */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%230088ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Eigener Pfeil */
+            background-repeat: no-repeat;
+            background-position: right 5px center;
+            padding-right: 25px; /* Platz für den Pfeil */
+            cursor: pointer;
         }
-        
+
+        /* Style für den Pfeil im Select (optional, aber näher am Bild) */
+        .input-group select {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%230088ff" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/><path fill-rule="evenodd" d="M7.646 11.354a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 12.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" transform="translate(0 -6)"/></svg>');
+            background-size: 10px 10px;
+            background-position: right 8px center;
+        }
+
+
         .btn {
             background-color: #e64a19;
             color: white;
@@ -182,29 +202,29 @@
             transition: background-color 0.3s;
             box-shadow: 0 2px 5px rgba(230, 74, 25, 0.3);
         }
-        
+
         .btn:hover {
             background-color: #d84315;
         }
-        
+
         .btn:active {
             transform: translateY(1px);
         }
-        
+
         .footer {
             margin-top: 8px;
             font-size: 0.9rem;
             color: #e64a19;
             text-align: center;
         }
-        
+
         .footer a {
             color: #e64a19;
             text-decoration: none;
         }
-        
+
         .loading {
-            position: absolute;
+            position: absolute; /* Positioniert relativ zum .app-container */
             top: 0;
             left: 0;
             width: 100%;
@@ -213,17 +233,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 20;
+            z-index: 20; /* Über dem Inhalt des Containers */
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.3s, visibility 0.3s;
+            border-radius: 15px; /* Passt sich an den Container an */
         }
-        
+
         .loading.active {
             visibility: visible;
             opacity: 1;
         }
-        
+
         .spinner {
             width: 30px;
             height: 30px;
@@ -232,23 +253,48 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         /* Optimierungen speziell für Smartphones */
         @media screen and (max-width: 480px) {
             .app-container {
                 width: 88%;
-                /* Vertikale Position für kleinere Bildschirme anpassen */
-                top: 45%;
+                /* Entferne die top-Anpassung, da Flexbox die Zentrierung übernimmt */
+                /* top: 45%; */
+                /* Optional: Passe den margin-top für kleinere Bildschirme an, falls nötig */
+                 margin-top: 2vh;
             }
-            
+
             h1 {
                 font-size: 1.5rem;
             }
+
+            .container {
+                padding: 15px; /* Etwas weniger Padding auf kleinen Screens */
+                gap: 15px;
+            }
+
+             .input-group select {
+                 width: 70px; /* Etwas schmaler machen */
+                 padding: 8px;
+                 font-size: 0.9rem;
+             }
+             .input-group input {
+                 padding: 10px;
+                 font-size: 0.9rem;
+             }
+             .btn {
+                 padding: 12px 0;
+                 font-size: 0.9rem;
+             }
+             .exchange-rate {
+                 font-size: 1.1rem;
+                 padding: 10px;
+             }
         }
     </style>
 </head>
@@ -256,18 +302,18 @@
     <div class="background">
         <div class="background-image"></div>
     </div>
-    
+
     <div class="app-container">
         <div class="container">
             <h1>Yen ↔ Wechselkurs</h1>
-            
+
             <div class="currency-flags">
                 <!-- Japan-Flagge als SVG -->
                 <svg class="flag" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="100%" fill="#fff"/>
                     <circle cx="450" cy="300" r="180" fill="#bc002d"/>
                 </svg>
-                
+
                 <!-- Deutsche Flagge als SVG -->
                 <svg class="flag" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="200" fill="#000"/>
@@ -275,7 +321,7 @@
                     <rect y="400" width="100%" height="200" fill="#FFCE00"/>
                 </svg>
             </div>
-            
+
             <div class="exchange-container">
                 <div class="exchange-rate">
                     <span id="yen-rate">1 JPY = <span id="euro-value">0.006140</span> EUR</span>
@@ -290,10 +336,10 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="converter">
                 <div class="input-group">
-                    <input type="number" id="amount" placeholder="Betrag" min="0" step="0.01">
+                    <input type="number" id="amount" placeholder="Betrag" min="0" step="any"> <!-- step="any" für mehr Flexibilität -->
                     <select id="from-currency">
                         <option value="JPY">JPY</option>
                         <option value="EUR">EUR</option>
@@ -308,13 +354,13 @@
                 </div>
                 <button class="btn" id="convert-btn">Umrechnen</button>
             </div>
-            
+
             <div class="footer">
                 <a href="https://www.finanzen.net/devisen/euro-yen-kurs" target="_blank">
                     Aktuelle Kurse
                 </a>
             </div>
-            
+
             <div class="loading" id="loading">
                 <div class="spinner"></div>
             </div>
@@ -331,84 +377,110 @@
             const yenValueSpan = document.getElementById('yen-value');
             const euroValueSpan = document.getElementById('euro-value');
             const loadingDiv = document.getElementById('loading');
-            
+
             // Statt API-Aufruf: Feste Wechselkursdaten (Stand: April 2025)
             let eurToJpyRate = 162.87; // EUR zu JPY
             let jpyToEurRate = 1 / eurToJpyRate;
-            
+
             // Funktion zum Formatieren von Zahlen
             function formatNumber(number, currency) {
-                if (currency === 'JPY') {
-                    return number.toFixed(2);
-                } else {
-                    return number.toFixed(6);
-                }
+                if (isNaN(number)) return ''; // Bei ungültiger Eingabe leeren String zurückgeben
+
+                const options = {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: currency === 'JPY' ? 2 : 6 // Mehr Nachkommastellen für EUR
+                };
+                // Verwende toLocaleString für bessere Formatierung (Tausendertrennzeichen etc.)
+                // aber stelle sicher, dass wir einen Punkt als Dezimaltrennzeichen für die Anzeige im Input haben
+                // Da das Input `readonly` ist, können wir auch eine lokalisierte Formatierung verwenden.
+                // Für Konsistenz mit dem Bild bleiben wir bei toFixed.
+                 if (currency === 'JPY') {
+                     return number.toFixed(2);
+                 } else {
+                     // Für EUR mehr Genauigkeit, wie im Originalcode
+                     return number.toFixed(6);
+                 }
             }
-            
+
             // Funktion zum Initialisieren der Wechselkurse auf der Seite
             function initializeExchangeRates() {
                 // Simuliere Laden
                 loadingDiv.classList.add('active');
-                
+
                 setTimeout(function() {
                     // Anzeige setzen
                     yenValueSpan.textContent = formatNumber(eurToJpyRate, 'JPY');
                     euroValueSpan.textContent = formatNumber(jpyToEurRate, 'EUR');
-                    
+
                     // Status der Seite als "geladen" markieren
                     loadingDiv.classList.remove('active');
-                }, 500);
+                }, 500); // Kurze Verzögerung für den Ladeeffekt
             }
-            
+
             // Funktion zum Umrechnen der Währungen
             function convertCurrency() {
                 const amount = parseFloat(amountInput.value);
-                if (isNaN(amount)) {
-                    alert('Bitte geben Sie einen gültigen Betrag ein.');
+                // Erlaube leere Eingabe oder 0
+                if (isNaN(amount) && amountInput.value !== '') {
+                     resultInput.value = ''; // Leere Ergebnis bei ungültiger Eingabe
+                     // Optional: alert('Bitte geben Sie einen gültigen Betrag ein.');
                     return;
                 }
-                
+                 if (amountInput.value === '' || amount === 0) {
+                     resultInput.value = ''; // Leere Ergebnis bei leerer Eingabe oder 0
+                     return;
+                 }
+
+
                 const fromCurrency = fromCurrencySelect.value;
                 const toCurrency = toCurrencySelect.value;
-                
+
                 let result;
                 if (fromCurrency === 'EUR' && toCurrency === 'JPY') {
                     result = amount * eurToJpyRate;
                 } else if (fromCurrency === 'JPY' && toCurrency === 'EUR') {
                     result = amount * jpyToEurRate;
                 } else if (fromCurrency === toCurrency) {
-                    result = amount;
+                    result = amount; // Gleiche Währung, kein Umrechnen nötig
                 }
-                
+
                 resultInput.value = formatNumber(result, toCurrency);
             }
-            
+
             // Event Listener hinzufügen
             convertBtn.addEventListener('click', convertCurrency);
-            
-            // Beim Ändern der Dropdown-Menüs die Werte umkehren
+
+            // Beim Ändern der Dropdown-Menüs die Werte umkehren und neu berechnen
             fromCurrencySelect.addEventListener('change', function() {
-                toCurrencySelect.value = fromCurrencySelect.value === 'EUR' ? 'JPY' : 'EUR';
-                if (amountInput.value) convertCurrency();
+                const previousFrom = this.value;
+                const otherSelectValue = toCurrencySelect.value;
+                // Wenn beide gleich wären, tausche den anderen
+                if (previousFrom === otherSelectValue) {
+                   toCurrencySelect.value = previousFrom === 'EUR' ? 'JPY' : 'EUR';
+                }
+                convertCurrency(); // Neuberechnung nach Änderung
             });
-            
+
             toCurrencySelect.addEventListener('change', function() {
-                fromCurrencySelect.value = toCurrencySelect.value === 'EUR' ? 'JPY' : 'EUR';
-                if (amountInput.value) convertCurrency();
+                 const previousTo = this.value;
+                 const otherSelectValue = fromCurrencySelect.value;
+                 // Wenn beide gleich wären, tausche den anderen
+                 if (previousTo === otherSelectValue) {
+                    fromCurrencySelect.value = previousTo === 'EUR' ? 'JPY' : 'EUR';
+                 }
+                convertCurrency(); // Neuberechnung nach Änderung
             });
-            
-            // Auch bei Eingabe direkt umrechnen
-            amountInput.addEventListener('input', function() {
-                if (amountInput.value) convertCurrency();
-            });
-            
-            // Mobile Optimierungen
+
+            // Auch bei Eingabe direkt umrechnen (live)
+            amountInput.addEventListener('input', convertCurrency);
+
+            // Mobile Optimierungen: Verhindert Zoom auf iOS bei Fokus auf Input/Select
             if ('ontouchstart' in window) {
-                document.querySelectorAll('input, select, button').forEach(element => {
-                    element.style.fontSize = '16px'; // Verhindert Zoom auf iOS
+                document.querySelectorAll('input[type="number"], select').forEach(element => {
+                    element.style.fontSize = '16px';
                 });
             }
-            
+
             // Wechselkurs beim Laden der Seite initialisieren
             initializeExchangeRates();
         });
