@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yen-Wechselkurs</title>
+    <title>Yen-Wechselkurs (Live)</title>
     <style>
         * {
             margin: 0;
@@ -52,17 +52,7 @@
         .app-container {
             width: 85%;
             max-width: 320px;
-            /* Entferne absolute Positionierung, um Flexbox-Zentrierung der Body zu nutzen */
-            /* position: absolute; */
-            /* top: 50%; */
-            /* left: 50%; */
-            /* transform: translate(-50%, -40%); */
-
-            /* Füge einen oberen Margin hinzu, um den Container leicht nach unten zu schieben */
-            /* Der Wert 4vh ist ein Startpunkt und kann angepasst werden, */
-            /* um die gewünschte Position relativ zum Hintergrundbild zu erreichen. */
             margin-top: 4vh;
-
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -116,29 +106,9 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Platz für entfernte Trendindikatoren */
             align-items: center;
-        }
-
-        .rate-value {
-            display: flex;
-            align-items: center;
-        }
-
-        .trend-indicator {
-            font-size: 0.9rem;
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: white;
-            margin-left: 8px;
-        }
-
-        .trend-up {
-            background-color: #27ae60;
-        }
-
-        .trend-down {
-            background-color: #e74c3c;
+            min-height: 45px; /* Höhe beibehalten, damit es nicht springt */
         }
 
         .converter {
@@ -161,7 +131,14 @@
             border-radius: 6px;
             font-size: 1rem;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            /* Standardmäßig deaktiviert, bis Kurse geladen sind */
+            /* background-color: #eee; */
         }
+         .input-group input:read-only {
+             background-color: #f0f0f0; /* Leichter grauer Hintergrund für das Ergebnis */
+             cursor: default;
+         }
+
 
         .input-group select {
             width: 80px;
@@ -171,23 +148,16 @@
             background-color: white;
             font-size: 1rem;
             text-align: center;
-            color: #0088ff; /* Farbe aus dem Bild übernommen */
+            color: #0088ff;
             font-weight: bold;
-            appearance: none; /* Standard-Pfeil entfernen */
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%230088ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Eigener Pfeil */
-            background-repeat: no-repeat;
-            background-position: right 5px center;
-            padding-right: 25px; /* Platz für den Pfeil */
-            cursor: pointer;
-        }
-
-        /* Style für den Pfeil im Select (optional, aber näher am Bild) */
-        .input-group select {
+            appearance: none;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%230088ff" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/><path fill-rule="evenodd" d="M7.646 11.354a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 12.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" transform="translate(0 -6)"/></svg>');
             background-size: 10px 10px;
             background-position: right 8px center;
+            background-repeat: no-repeat;
+            padding-right: 25px;
+            cursor: pointer;
         }
-
 
         .btn {
             background-color: #e64a19;
@@ -199,17 +169,24 @@
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, opacity 0.3s;
             box-shadow: 0 2px 5px rgba(230, 74, 25, 0.3);
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             background-color: #d84315;
         }
 
-        .btn:active {
+        .btn:active:not(:disabled) {
             transform: translateY(1px);
         }
+
+        .btn:disabled {
+            background-color: #ffab91; /* Hellere Farbe für deaktiviert */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
 
         .footer {
             margin-top: 8px;
@@ -217,6 +194,11 @@
             color: #e64a19;
             text-align: center;
         }
+         .footer .api-info {
+            font-size: 0.75rem;
+            color: #757575; /* Dezenteres Grau */
+            margin-top: 5px;
+         }
 
         .footer a {
             color: #e64a19;
@@ -224,7 +206,7 @@
         }
 
         .loading {
-            position: absolute; /* Positioniert relativ zum .app-container */
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -233,11 +215,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 20; /* Über dem Inhalt des Containers */
+            z-index: 20;
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.3s, visibility 0.3s;
-            border-radius: 15px; /* Passt sich an den Container an */
+            border-radius: 15px;
         }
 
         .loading.active {
@@ -259,13 +241,18 @@
             100% { transform: rotate(360deg); }
         }
 
+        .error-message {
+             color: #e74c3c;
+             font-size: 0.9rem;
+             text-align: center;
+             margin-top: 10px;
+             display: none; /* Standardmäßig versteckt */
+        }
+
         /* Optimierungen speziell für Smartphones */
         @media screen and (max-width: 480px) {
             .app-container {
                 width: 88%;
-                /* Entferne die top-Anpassung, da Flexbox die Zentrierung übernimmt */
-                /* top: 45%; */
-                /* Optional: Passe den margin-top für kleinere Bildschirme an, falls nötig */
                  margin-top: 2vh;
             }
 
@@ -274,12 +261,12 @@
             }
 
             .container {
-                padding: 15px; /* Etwas weniger Padding auf kleinen Screens */
+                padding: 15px;
                 gap: 15px;
             }
 
              .input-group select {
-                 width: 70px; /* Etwas schmaler machen */
+                 width: 70px;
                  padding: 8px;
                  font-size: 0.9rem;
              }
@@ -294,6 +281,7 @@
              .exchange-rate {
                  font-size: 1.1rem;
                  padding: 10px;
+                 min-height: 40px;
              }
         }
     </style>
@@ -313,7 +301,6 @@
                     <rect width="100%" height="100%" fill="#fff"/>
                     <circle cx="450" cy="300" r="180" fill="#bc002d"/>
                 </svg>
-
                 <!-- Deutsche Flagge als SVG -->
                 <svg class="flag" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="200" fill="#000"/>
@@ -324,22 +311,18 @@
 
             <div class="exchange-container">
                 <div class="exchange-rate">
-                    <span id="yen-rate">1 JPY = <span id="euro-value">0.006140</span> EUR</span>
-                    <div class="rate-value">
-                        <span class="trend-indicator trend-up">▲</span>
-                    </div>
+                    <span id="yen-rate">1 JPY = <span id="euro-value">---</span> EUR</span>
+                    <!-- Trend-Indikator entfernt -->
                 </div>
                 <div class="exchange-rate">
-                    <span id="euro-rate">1 EUR = <span id="yen-value">162.87</span> JPY</span>
-                    <div class="rate-value">
-                        <span class="trend-indicator trend-down">▼</span>
-                    </div>
+                    <span id="euro-rate">1 EUR = <span id="yen-value">---</span> JPY</span>
+                    <!-- Trend-Indikator entfernt -->
                 </div>
             </div>
 
             <div class="converter">
                 <div class="input-group">
-                    <input type="number" id="amount" placeholder="Betrag" min="0" step="any"> <!-- step="any" für mehr Flexibilität -->
+                    <input type="number" id="amount" placeholder="Betrag" min="0" step="any">
                     <select id="from-currency">
                         <option value="JPY">JPY</option>
                         <option value="EUR">EUR</option>
@@ -352,16 +335,20 @@
                         <option value="JPY">JPY</option>
                     </select>
                 </div>
-                <button class="btn" id="convert-btn">Umrechnen</button>
+                <!-- Button ist initial deaktiviert -->
+                <button class="btn" id="convert-btn" disabled>Umrechnen</button>
             </div>
+
+             <p id="error-message" class="error-message"></p> <!-- Platzhalter für Fehlermeldungen -->
 
             <div class="footer">
-                <a href="https://www.finanzen.net/devisen/euro-yen-kurs" target="_blank">
+                <a href="https://www.frankfurter.app" target="_blank" rel="noopener noreferrer">
                     Aktuelle Kurse
                 </a>
+                 <div class="api-info">Kurse via frankfurter.app</div>
             </div>
 
-            <div class="loading" id="loading">
+            <div class="loading active" id="loading"> <!-- Initial aktiv -->
                 <div class="spinner"></div>
             </div>
         </div>
@@ -377,60 +364,103 @@
             const yenValueSpan = document.getElementById('yen-value');
             const euroValueSpan = document.getElementById('euro-value');
             const loadingDiv = document.getElementById('loading');
+            const yenRateSpan = document.getElementById('yen-rate');
+            const euroRateSpan = document.getElementById('euro-rate');
+            const errorMessageP = document.getElementById('error-message');
 
-            // Statt API-Aufruf: Feste Wechselkursdaten (Stand: April 2025)
-            let eurToJpyRate = 162.87; // EUR zu JPY
-            let jpyToEurRate = 1 / eurToJpyRate;
+            // Variablen für die Wechselkurse
+            let eurToJpyRate = null;
+            let jpyToEurRate = null;
 
             // Funktion zum Formatieren von Zahlen
             function formatNumber(number, currency) {
-                if (isNaN(number)) return ''; // Bei ungültiger Eingabe leeren String zurückgeben
+                if (isNaN(number) || number === null) return ''; // Bei ungültiger Eingabe oder null
 
                 const options = {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: currency === 'JPY' ? 2 : 6 // Mehr Nachkommastellen für EUR
                 };
-                // Verwende toLocaleString für bessere Formatierung (Tausendertrennzeichen etc.)
-                // aber stelle sicher, dass wir einen Punkt als Dezimaltrennzeichen für die Anzeige im Input haben
-                // Da das Input `readonly` ist, können wir auch eine lokalisierte Formatierung verwenden.
-                // Für Konsistenz mit dem Bild bleiben wir bei toFixed.
+
                  if (currency === 'JPY') {
+                     // Runden auf 2 Nachkommastellen für JPY
                      return number.toFixed(2);
                  } else {
-                     // Für EUR mehr Genauigkeit, wie im Originalcode
+                     // Für EUR mehr Genauigkeit
                      return number.toFixed(6);
                  }
             }
 
-            // Funktion zum Initialisieren der Wechselkurse auf der Seite
-            function initializeExchangeRates() {
-                // Simuliere Laden
-                loadingDiv.classList.add('active');
+            // Funktion zum Abrufen und Anzeigen der Wechselkurse
+            async function fetchAndDisplayRates() {
+                loadingDiv.classList.add('active'); // Ladeanzeige starten
+                convertBtn.disabled = true; // Button deaktivieren
+                // amountInput.disabled = true; // Eingabefeld auch deaktivieren?
+                errorMessageP.style.display = 'none'; // Alte Fehlermeldungen ausblenden
+                errorMessageP.textContent = '';
 
-                setTimeout(function() {
-                    // Anzeige setzen
-                    yenValueSpan.textContent = formatNumber(eurToJpyRate, 'JPY');
-                    euroValueSpan.textContent = formatNumber(jpyToEurRate, 'EUR');
+                try {
+                    // API-Endpunkt für EUR -> JPY Abfrage
+                    const response = await fetch('https://api.frankfurter.app/latest?from=EUR&to=JPY');
 
-                    // Status der Seite als "geladen" markieren
+                    if (!response.ok) {
+                        throw new Error(`API-Fehler: ${response.status} ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data && data.rates && data.rates.JPY) {
+                        eurToJpyRate = data.rates.JPY;
+                        jpyToEurRate = 1 / eurToJpyRate;
+
+                        // Kurse in der UI anzeigen
+                        yenValueSpan.textContent = formatNumber(eurToJpyRate, 'JPY');
+                        euroValueSpan.textContent = formatNumber(jpyToEurRate, 'EUR');
+
+                        // Konverter aktivieren
+                        convertBtn.disabled = false;
+                        // amountInput.disabled = false;
+
+                        // Eventuell bestehende Eingabe neu berechnen
+                        convertCurrency();
+
+                    } else {
+                        throw new Error('Ungültige Daten von der API empfangen.');
+                    }
+
+                } catch (error) {
+                    console.error('Fehler beim Abrufen der Wechselkurse:', error);
+                    // Fehlermeldung anzeigen
+                    errorMessageP.textContent = 'Fehler: Wechselkurse konnten nicht geladen werden.';
+                    errorMessageP.style.display = 'block';
+                    // Platzhalter oder alte Werte anzeigen lassen? Hier erstmal ---
+                    yenValueSpan.textContent = '---';
+                    euroValueSpan.textContent = '---';
+                    convertBtn.disabled = true; // Button bleibt deaktiviert
+                    // amountInput.disabled = true;
+                } finally {
+                    // Ladeanzeige immer beenden
                     loadingDiv.classList.remove('active');
-                }, 500); // Kurze Verzögerung für den Ladeeffekt
+                }
             }
 
             // Funktion zum Umrechnen der Währungen
             function convertCurrency() {
+                 // Nur umrechnen, wenn Kurse verfügbar sind
+                 if (eurToJpyRate === null || jpyToEurRate === null) {
+                     resultInput.value = '';
+                     return;
+                 }
+
                 const amount = parseFloat(amountInput.value);
-                // Erlaube leere Eingabe oder 0
+
                 if (isNaN(amount) && amountInput.value !== '') {
                      resultInput.value = ''; // Leere Ergebnis bei ungültiger Eingabe
-                     // Optional: alert('Bitte geben Sie einen gültigen Betrag ein.');
                     return;
                 }
                  if (amountInput.value === '' || amount === 0) {
                      resultInput.value = ''; // Leere Ergebnis bei leerer Eingabe oder 0
                      return;
                  }
-
 
                 const fromCurrency = fromCurrencySelect.value;
                 const toCurrency = toCurrencySelect.value;
@@ -441,7 +471,9 @@
                 } else if (fromCurrency === 'JPY' && toCurrency === 'EUR') {
                     result = amount * jpyToEurRate;
                 } else if (fromCurrency === toCurrency) {
-                    result = amount; // Gleiche Währung, kein Umrechnen nötig
+                    result = amount; // Gleiche Währung
+                } else {
+                    result = null; // Sollte nicht passieren bei nur zwei Währungen
                 }
 
                 resultInput.value = formatNumber(result, toCurrency);
@@ -450,23 +482,22 @@
             // Event Listener hinzufügen
             convertBtn.addEventListener('click', convertCurrency);
 
-            // Beim Ändern der Dropdown-Menüs die Werte umkehren und neu berechnen
+            // Automatische Anpassung der "An"-Währung, wenn "Von"-Währung geändert wird
             fromCurrencySelect.addEventListener('change', function() {
-                const previousFrom = this.value;
-                const otherSelectValue = toCurrencySelect.value;
-                // Wenn beide gleich wären, tausche den anderen
-                if (previousFrom === otherSelectValue) {
-                   toCurrencySelect.value = previousFrom === 'EUR' ? 'JPY' : 'EUR';
+                const fromValue = this.value;
+                const toValue = toCurrencySelect.value;
+                if (fromValue === toValue) {
+                   toCurrencySelect.value = (fromValue === 'EUR') ? 'JPY' : 'EUR';
                 }
                 convertCurrency(); // Neuberechnung nach Änderung
             });
 
+            // Automatische Anpassung der "Von"-Währung, wenn "An"-Währung geändert wird
             toCurrencySelect.addEventListener('change', function() {
-                 const previousTo = this.value;
-                 const otherSelectValue = fromCurrencySelect.value;
-                 // Wenn beide gleich wären, tausche den anderen
-                 if (previousTo === otherSelectValue) {
-                    fromCurrencySelect.value = previousTo === 'EUR' ? 'JPY' : 'EUR';
+                 const toValue = this.value;
+                 const fromValue = fromCurrencySelect.value;
+                 if (toValue === fromValue) {
+                    fromCurrencySelect.value = (toValue === 'EUR') ? 'JPY' : 'EUR';
                  }
                 convertCurrency(); // Neuberechnung nach Änderung
             });
@@ -477,12 +508,15 @@
             // Mobile Optimierungen: Verhindert Zoom auf iOS bei Fokus auf Input/Select
             if ('ontouchstart' in window) {
                 document.querySelectorAll('input[type="number"], select').forEach(element => {
-                    element.style.fontSize = '16px';
+                    // Font-Size >= 16px verhindert Auto-Zoom auf iOS
+                    if (parseFloat(window.getComputedStyle(element).fontSize) < 16) {
+                         element.style.fontSize = '16px';
+                    }
                 });
             }
 
-            // Wechselkurs beim Laden der Seite initialisieren
-            initializeExchangeRates();
+            // Wechselkurse beim Laden der Seite abrufen und anzeigen
+            fetchAndDisplayRates();
         });
     </script>
 </body>
